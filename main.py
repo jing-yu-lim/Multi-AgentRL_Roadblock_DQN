@@ -17,16 +17,16 @@ if __name__ == '__main__':
         score = 0
         done = False
         observation = env.reset()
-        print(f'outside obs: {observation}')
+        #print(f'outside obs: {observation}')
         while not done:
             left_action = left_agent.choose_action(observation)
             right_action = right_agent.choose_action(observation)
 
             observation_, left_reward, right_reward, done = env.step(left_action, right_action)
             score+=left_reward + right_reward
-            print(f'\nleft action: {left_action} | rightaction: {right_action}')
-            print(f'left reward: {left_reward} | right reward: {right_reward}')
-            print(f"old obs: {observation} | new obs: {observation_} | done: {done}\n")
+            # print(f'\nleft action: {left_action} | rightaction: {right_action}')
+            # print(f'left reward: {left_reward} | right reward: {right_reward}')
+            # print(f"old obs: {observation} | new obs: {observation_} | done: {done}\n")
 
 
             left_agent.store_transition(np.copy(observation), left_action, left_reward, np.copy(observation_), done)
