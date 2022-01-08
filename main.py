@@ -9,28 +9,33 @@ if __name__ == '__main__':
     right_agent = Agent(gamma = 0.99, epsilon = 1.0, batch_size = 64, n_actions=2, eps_min=0.01, input_dims=[4],lr = 0.003)
     
     scores, eps_history = [], [] 
-    n_games =50
-    target_update=100 #how often to update target network
+    n_games =1000
+    target_update=50 #how often to update target network
     lr_step=50       #how often to step through scheduler
 
     for i in range(n_games):
         score = 0
         done = False
         observation = env.reset()
+        print(f'outside obs: {observation}')
         while not done:
             left_action = left_agent.choose_action(observation)
             right_action = right_agent.choose_action(observation)
 
             observation_, left_reward, right_reward, done = env.step(left_action, right_action)
             score+=left_reward + right_reward
+            print(f'\nleft action: {left_action} | rightaction: {right_action}')
+            print(f'left reward: {left_reward} | right reward: {right_reward}')
+            print(f"old obs: {observation} | new obs: {observation_} | done: {done}\n")
 
-            left_agent.store_transition(observation, left_action, left_reward, observation_, done)
-            right_agent.store_transition(observation, right_action, right_reward, observation_, done)
+
+            left_agent.store_transition(np.copy(observation), left_action, left_reward, np.copy(observation_), done)
+            right_agent.store_transition(np.copy(observation), right_action, right_reward, np.copy(observation_), done)
             
             left_agent.learn()
             right_agent.learn()
 
-            observation = observation_
+            observation = np.copy(observation_)
 
         scores.append(score)
         eps_history.append(left_agent.epsilon)
@@ -53,5 +58,5 @@ if __name__ == '__main__':
     dir_name = './results_diagram/'
     if not os.path.exists(dir_name):
         os.mkdir(dir_name)
-    filename = dir_name+'Roadblock3.png'
+    filename = dir_name+'Roadblock4.png'
     plotLearning(x, scores, eps_history, filename)

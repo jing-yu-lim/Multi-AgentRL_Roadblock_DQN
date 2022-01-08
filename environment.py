@@ -27,7 +27,7 @@ class Roadblock_Env():
     def reset(self):
         self.state = np.array([0,0, self.left_type, self.right_type], dtype=np.float32) if self.observable == True \
                      else np.array([0,0], dtype=np.float32)
-        return self.state
+        return np.copy(self.state)
     
     def is_terminal(self):
         if self.state[0] == 1 or self.state[1] ==1:
@@ -38,20 +38,20 @@ class Roadblock_Env():
         rew=0
         if (self.state == self.left_ideal_state).all(): 
             if type == 0:
-                rew = 2.0
+                rew = 0.5
             else: 
-                rew = 1.0
+                rew = 0.4
         
         elif (self.state == self.right_ideal_state).all():
             if type == 1:
-                rew = 2.0
+                rew = 0.5
             else: 
-                rew = 1.0
+                rew = 0.4
 
         elif (self.state == self.dead_state).all():
-            rew = -5.0
+            rew = -1.0
         elif (self.state == self.idle_state).all():
-            rew = -0.5
+            rew = -0.3
         
         return rew
 
