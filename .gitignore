@@ -1,3 +1,6 @@
 __pycache__/
 results_diagram/
 test.py
+.venv
+.vscode/
+.python-version
