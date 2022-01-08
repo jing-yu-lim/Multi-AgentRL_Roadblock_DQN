@@ -8,7 +8,7 @@ def plotLearning(x, scores, epsilons, filename, lines=None):
     ax2=fig.add_subplot(111, label="2", frame_on=False)
 
     ax.plot(x, epsilons, color="C0")
-    ax.set_xlabel("Game: "+filename[27:], color="C0")
+    ax.set_xlabel("Game: "+filename[29:], color="C0") #set to [29:] for POMDP 
     ax.set_ylabel("Epsilon", color="C0")
     ax.tick_params(axis='x', colors="C0")
     ax.tick_params(axis='y', colors="C0")
