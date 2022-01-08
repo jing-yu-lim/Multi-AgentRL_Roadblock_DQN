@@ -6,8 +6,8 @@ import os
 if __name__ == '__main__':
     seed_value = 999
     np.random.seed(seed_value)
-    env = Roadblock_Env(left_type=0, right_type = 1)
-    left_agent = Agent(gamma = 0.99, epsilon = 1.0, batch_size = 64, n_actions=2, eps_min=0.01, input_dims=[4],lr = 0.003)
+    env = Roadblock_Env(left_type=0, right_type = 1, observable=True) # change observable to False to change to POMDP
+    left_agent = Agent(gamma = 0.99, epsilon = 1.0, batch_size = 64, n_actions=2, eps_min=0.01, input_dims=[4],lr = 0.003) #set input_dims to [2] for POMDP
     right_agent = Agent(gamma = 0.99, epsilon = 1.0, batch_size = 64, n_actions=2, eps_min=0.01, input_dims=[4],lr = 0.003)
     
     left_scores, right_scores, total_scores, eps_history = [], [], [], [] 
@@ -19,7 +19,7 @@ if __name__ == '__main__':
         left_score,right_score, total_score = 0, 0, 0
         done = False
         observation = env.reset()
-        #print(f'outside obs: {observation}')
+        # print(f'outside obs: {observation}')
         while not done:
             left_action = left_agent.choose_action(observation)
             right_action = right_agent.choose_action(observation)
@@ -28,6 +28,7 @@ if __name__ == '__main__':
             left_score +=left_reward
             right_score +=right_reward
             total_score+=left_reward + right_reward
+            
             # print(f'\nleft action: {left_action} | rightaction: {right_action}')
             # print(f'left reward: {left_reward} | right reward: {right_reward}')
             # print(f"old obs: {observation} | new obs: {observation_} | done: {done}\n")
@@ -60,14 +61,14 @@ if __name__ == '__main__':
         print('episode',i, 'left score %.2f' % left_score,'right score %.2f' % right_score, 'average score %.2f' % avg_total_score, 'epsilon %.2f' % left_agent.epsilon)
     
     x=[i+1 for i in range(n_games)]
-    dir_name = './results_diagram/MDP_3000/'
+    dir_name = './results_diagram/POMDP_3000_switch/'
     if not os.path.exists(dir_name):
         os.mkdir(dir_name)
 
-    filename = dir_name+'MDP_Roadblock_Left.png'
+    filename = dir_name+'POMDP_Roadblock_Left.png'
     plotLearning(x, left_scores, eps_history, filename)
-    filename = dir_name+'MDP_Roadblock_Right.png'
+    filename = dir_name+'POMDP_Roadblock_Right.png'
     plotLearning(x, right_scores, eps_history, filename)
-    filename = dir_name+'MDP_Roadblock_Total.png'
+    filename = dir_name+'POMDP_Roadblock_Total.png'
     plotLearning(x, total_scores, eps_history, filename)
     
