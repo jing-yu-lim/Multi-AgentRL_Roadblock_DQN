@@ -6,6 +6,8 @@ class Roadblock_Env():
 
         type == 1: prefers right_agent to go first
 
+        type == 2: prefers none
+
         left_type: the type of the left agent
         
         right_type: the type of the right agent
@@ -36,11 +38,14 @@ class Roadblock_Env():
 
     def reward(self, type):
         rew=0
+
+
+        
         if (self.state == self.left_ideal_state).all(): 
             if type == 0:
                 rew = 0.5
             else: 
-                rew = 0.4
+                rew = 0.4 #type == 2 assigned 0.4 no matter what
         
         elif (self.state == self.right_ideal_state).all():
             if type == 1:
