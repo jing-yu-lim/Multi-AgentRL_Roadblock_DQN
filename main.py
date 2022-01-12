@@ -8,16 +8,18 @@ import argparse
 parser = argparse.ArgumentParser(description = 'pomdpVSmdp')
 parser.add_argument('-mdp', dest='observable', action='store_true')
 parser.add_argument('-pomdp', dest='observable', action='store_false')
+parser.set_defaults(observable = True)
 parser.add_argument('-e', '--epsilon', nargs='?', type= float, default = 1.0, const = 1.0)
 parser.add_argument('-g', '--gamenum', nargs='?', type =int, default = 3000, const = 3000)
 parser.add_argument('-lr', '--lr', nargs='?', type =float, default = 0.003, const = 0.003)
 parser.add_argument('-s', '--seed_value', nargs='?', type =int, default = 999, const = 999)
+parser.add_argument('-lt', '--left_type', nargs='?', type =int, default = 0, const = 0)
+parser.add_argument('-rt', '--right_type', nargs='?', type =int, default = 1, const = 1)
 
 args= parser.parse_args()
 
 if __name__ == '__main__':
     print(args)
-
     seed_value = args.seed_value #999
     np.random.seed(seed_value)
     if args.observable:
@@ -25,18 +27,20 @@ if __name__ == '__main__':
     else:
         input_dims = [2]
 
-    env = Roadblock_Env(left_type=0, right_type = 1, observable=args.observable) 
+    env = Roadblock_Env(left_type=args.left_type, right_type = args.right_type, observable=args.observable) 
     left_agent = Agent(gamma = 0.99, epsilon = args.epsilon, batch_size = 64, n_actions=2, eps_min=0.01, input_dims=input_dims,lr = args.lr) 
     right_agent = Agent(gamma = 0.99, epsilon = args.epsilon, batch_size = 64, n_actions=2, eps_min=0.01, input_dims= input_dims,lr = args.lr)
     
     left_scores, right_scores, total_scores, eps_history = [], [], [], []
-     
+    
     n_games =args.gamenum
-    target_update=50 #how often to update target network
-    lr_step=50       #how often to step through scheduler
+    target_update=50 
+    lr_step=50       
 
+    opt_game_count=0
+    game_count =0
     for i in range(n_games):
-        left_score,right_score, total_score = 0, 0, 0
+        left_score,right_score, total_score, = 0, 0, 0
         done = False
         observation = env.reset()
         # print(f'\noutside obs: {observation}')
@@ -48,7 +52,7 @@ if __name__ == '__main__':
             left_score +=left_reward
             right_score +=right_reward
             total_score+=left_reward + right_reward
-            
+
             # print(f'\nleft action: {left_action} | rightaction: {right_action}')
             # print(f'left reward: {left_score} | right reward: {right_score}')
             # print(f"old obs: {observation} | new obs: {observation_} | done: {done}\n")
@@ -60,6 +64,9 @@ if __name__ == '__main__':
             right_agent.learn()
 
             observation = np.copy(observation_)
+
+        if total_score >= 0.9:
+            opt_game_count +=1
 
         left_scores.append(left_score)
         right_scores.append(right_score)
@@ -81,30 +88,36 @@ if __name__ == '__main__':
         print('episode',i, 'left score %.2f' % left_score,'right score %.2f' % right_score, 'average score %.2f' % avg_total_score, 'epsilon %.2f' % left_agent.epsilon)
     
     x=[i+1 for i in range(n_games)]
-
+    
+    type_name = 'Type_' + f'{args.left_type, args.right_type}_'
     if args.observable==True:
-        dir_name = './results_diagram/' + 'MDP_eps' + f'{args.epsilon}' + '_rs' + f'{seed_value}' + '/'
+        dir_name = './results_diagram/' + 'MDP_eps' + f'{args.epsilon}_' + type_name[:-1] + '/'
     else:
-        dir_name = './results_diagram/' + 'POMDP_eps' + f'{args.epsilon}' + '_rs' + f'{seed_value}' + '/'
+        dir_name = './results_diagram/' + 'POMDP_eps' + f'{args.epsilon}_' + type_name[:-1] + '/'
         
     if not os.path.exists(dir_name):
         os.mkdir(dir_name)
-
+    
     if args.observable == True:
-        filename = dir_name+'MDP_Roadblock_Left.png'
-        plotLearning(x, left_scores, eps_history, filename)
-        filename = dir_name+'MDP_Roadblock_Right.png'
-        plotLearning(x, right_scores, eps_history, filename)
-        filename = dir_name+'MDP_Roadblock_Total.png'
-        plotLearning(x, total_scores, eps_history, filename)
+        leftpic= type_name + 'MDP_Left.png'
+        filename = dir_name + leftpic
+        plotLearning(x, left_scores, eps_history, filename, leftpic)
+        rightpic=type_name + 'MDP_Right.png'
+        filename = dir_name + rightpic
+        plotLearning(x, right_scores, eps_history, filename, rightpic)
+        totalpic=type_name +'MDP_Total.png'
+        filename = dir_name + totalpic
+        plotLearning(x, total_scores, eps_history, filename, totalpic)
     else:
-        filename = dir_name+'POMDP_Roadblock_Left.png'
-        plotLearning(x, left_scores, eps_history, filename)
-        filename = dir_name+'POMDP_Roadblock_Right.png'
-        plotLearning(x, right_scores, eps_history, filename)
-        filename = dir_name+'POMDP_Roadblock_Total.png'
-        plotLearning(x, total_scores, eps_history, filename)
+        leftpic=type_name +'POMDP_Left.png'
+        filename = dir_name + leftpic
+        plotLearning(x, left_scores, eps_history, filename, leftpic)
+        rightpic=type_name +'POMDP_Right.png'  
+        filename = dir_name + rightpic
+        plotLearning(x, right_scores, eps_history, filename, rightpic)
+        totalpic=type_name +'POMDP_Total.png'
+        filename = dir_name + totalpic
+        plotLearning(x, total_scores, eps_history, filename, totalpic)
     
     print(args)
-
-    
+            
