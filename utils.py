@@ -16,7 +16,7 @@ def plotLearning(x, scores, epsilons, filename, picname, lines=None):
     N = len(scores)
     running_avg = np.empty(N)
     for t in range(N):
-	    running_avg[t] = np.mean(scores[max(0, t-20):(t+1)])
+        running_avg[t] = np.mean(scores[max(0, t-20):(t+1)])
 
     ax2.scatter(x, running_avg, color="C1")
     #ax2.xaxis.tick_top()
