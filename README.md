@@ -10,8 +10,8 @@
   - type 0: if left car goes first, reward = 0.5 else reward = 0.4
   - type 1: if right car goes first, reward = 0.5 else reward = 0.4
   - type 2: receives reward = 0.4 if only one car advances
-- If both agents advances, reward = -1
-- If both agents diels, reward = -0.3
+- If both agents advance, reward = -1
+- If both agents idle, reward = -0.3
 ## POMDP vs MDP
 - In the MDP environment, the Type of both agents will be observable to both agents
 - In the POMDP environment, the Type will not be observable
@@ -29,4 +29,5 @@
 
 # Conclusion
 - It appears that there is no difference between the POMDP and MDP setup. This could be because the agent easily overfit to the instantiated type over the course of the training
+- Future experiments includes randomising the Types of both agents with every episode reset
 
