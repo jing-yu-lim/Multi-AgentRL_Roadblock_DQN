@@ -27,5 +27,6 @@
 | L=1 R=2 | ![image](https://user-images.githubusercontent.com/79006977/173008213-83a4671c-7f20-4bba-b8ef-92c6219019e4.png) | ![image](https://user-images.githubusercontent.com/79006977/173008256-0d16d54a-7f39-494c-8130-10b9ff93f303.png) |
 | L=2 R=2 |![image](https://user-images.githubusercontent.com/79006977/173008967-af1f0e44-fef2-4173-a10b-fe17e919517d.png) | ![image](https://user-images.githubusercontent.com/79006977/173009017-7119e9c6-aa92-4183-8320-07a972953ad5.png) |
 
-
+# Conclusion
+- It appears that there is no difference between the POMDP and MDP setup. This could be because the agent easily overfit to the instantiated type over the course of the training
 
